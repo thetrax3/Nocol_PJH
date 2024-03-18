@@ -7,13 +7,12 @@
 #include "Core/FileDialog/FileDialog.h"
 #include "Core/Voxel/VoxelFilter.h"
 #include "Core/PCDViewer/PCDViewer.h"
+#include "Core/ColorizeByDistance/ColorizeByDistance.h"
 
-void FileOpen(std::string &targetString)
+bool FileOpen(std::string &targetString)
 {
     // 1. ÆÄÀÏ Å½»ö±â·Î °æ·Î È¹µæ
     targetString = FileDialog::openFileDialog();
-
-    auto start_chrono = std::chrono::high_resolution_clock::now();
 
     if (!targetString.empty())
     {
@@ -22,10 +21,9 @@ void FileOpen(std::string &targetString)
     else
     {
         std::cerr << "No file selected or operation canceled." << std::endl;
-        return;
+        return false;
     }
-    auto end_chrono = std::chrono::high_resolution_clock::now();
-    std::cout << "File Exitst!\nElapse Time_FileExistCheck : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
+    return true;
 }
 
 pcl::PointCloud<pcl::PointXYZ>::Ptr CreatePCD(std::string &path)
@@ -44,20 +42,18 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr CreatePCD(std::string &path)
 
 int main()
 {
-    auto start_chrono = std::chrono::high_resolution_clock::now();
     std::string pcdFilePath;
-    FileOpen(pcdFilePath);
-    auto end_chrono = std::chrono::high_resolution_clock::now();
-    std::cout << "Elapse File_Open : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
+    if (!FileOpen(pcdFilePath))
+        return 0;
 
-    start_chrono = std::chrono::high_resolution_clock::now();
+    auto start_chrono = std::chrono::high_resolution_clock::now();
     auto cloud = CreatePCD(pcdFilePath);
-    end_chrono = std::chrono::high_resolution_clock::now();
+    auto end_chrono = std::chrono::high_resolution_clock::now();
     std::cout << "Elapse CreatePCD : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
 
-    std::cout << "Before Cloud count : " << cloud->points.size() << std::endl;
+    std::cout << "\nBefore Cloud count : " << cloud->points.size() << std::endl;
     start_chrono = std::chrono::high_resolution_clock::now();
-    VoxelFilter::PointCloudWithVoxelFilter(cloud);
+    VoxelFilter::PointCloudWithVoxelFilter(cloud, 2.5f);
     end_chrono = std::chrono::high_resolution_clock::now();
     std::cout << "Elapse Voxel : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
     std::cout << "After Cloud count : " << cloud->points.size() << std::endl;
@@ -65,7 +61,7 @@ int main()
     start_chrono = std::chrono::high_resolution_clock::now();
     auto colorized_cloud = ColorizeByDistance::colorizePointCloudByDistance(cloud);
     end_chrono = std::chrono::high_resolution_clock::now();
-    std::cout << "Elapse Colorize : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
+    std::cout << "\nElapse Colorize : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
 
     PCDViewer::PlayViewer(colorized_cloud);
 

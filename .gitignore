@@ -1,0 +1,10 @@
+# Folder
+build/*
+build/
+
+#file
+*.log
+*.txt
+
+# Exception
+!CMakeLists.txt

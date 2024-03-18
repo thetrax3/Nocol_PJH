@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.10.2) #Cmake 최소 버전 요구
 cmake_policy(SET CMP0074 NEW)
 
 project(
-    CppTest
+    CppTest #필수 프로젝트 이름
     VERSION 0.1
     DESCRIPTION "테스트 프로젝트"
     LANGUAGES CXX)
 
 # PCL을 찾아서 설정합니다.
-find_package(PCL 1.11 REQUIRED)
+find_package(PCL 1.11 REQUIRED) # PCL 라이브러리 가져오기
 
 # PCL이 설치되어 있지 않은 경우 에러 메시지를 출력합니다.
 if(NOT PCL_FOUND)

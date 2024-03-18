@@ -2,6 +2,5 @@
 
 namespace VoxelFilter
 {
-    void PointCloudWithVoxelFilter(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud);
-    float leafSize = 2.5f;
+    void PointCloudWithVoxelFilter(pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud, float leafSize = 2.5f);
 }
