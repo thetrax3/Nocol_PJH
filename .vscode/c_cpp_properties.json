@@ -3,8 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
-                "C:/Program Files/PCL 1.11.0/include/pcl-1.11"
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "_DEBUG",

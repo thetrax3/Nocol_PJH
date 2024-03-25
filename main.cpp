@@ -33,6 +33,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr CreatePCD(std::string &path)
     // 3. PCD 파일에서 데이터 읽기
     if (pcl::io::loadPCDFile<pcl::PointXYZ>(path, *cloud) == -1)
     {
+        //
         PCL_ERROR("Couldn't read file %s\n", path.c_str());
         return nullptr;
     }
@@ -42,6 +43,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr CreatePCD(std::string &path)
 
 int main()
 {
+    PCDViewer pcd;
     std::string pcdFilePath;
     if (!FileOpen(pcdFilePath))
         return 0;
@@ -50,20 +52,19 @@ int main()
     auto cloud = CreatePCD(pcdFilePath);
     auto end_chrono = std::chrono::high_resolution_clock::now();
     std::cout << "Elapse CreatePCD : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
+    // pcd.CreateViewer(cloud, "PCD Viewer1", false);
 
     std::cout << "\nBefore Cloud count : " << cloud->points.size() << std::endl;
     start_chrono = std::chrono::high_resolution_clock::now();
-    VoxelFilter::PointCloudWithVoxelFilter(cloud, 2.5f);
+    VoxelFilter::PointCloudWithVoxelFilter(cloud, 2.0f);
     end_chrono = std::chrono::high_resolution_clock::now();
     std::cout << "Elapse Voxel : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
     std::cout << "After Cloud count : " << cloud->points.size() << std::endl;
 
-    start_chrono = std::chrono::high_resolution_clock::now();
     auto colorized_cloud = ColorizeByDistance::colorizePointCloudByDistance(cloud);
-    end_chrono = std::chrono::high_resolution_clock::now();
-    std::cout << "\nElapse Colorize : " << std::chrono::duration_cast<std::chrono::milliseconds>(end_chrono - start_chrono).count() << std::endl;
 
-    PCDViewer::PlayViewer(colorized_cloud);
-
+    // pcd.CreateViewer_RGB(colorized_cloud, "PCD Viewer2", false);
+    // pcd.PlayViewer();
+    pcd.PlayViewer(colorized_cloud, "TestViewer");
     return 0;
 }
